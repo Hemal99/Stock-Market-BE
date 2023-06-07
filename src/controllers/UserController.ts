@@ -56,43 +56,14 @@ export const UserSignUp = async (
       return res.status(400).json(validationError);
     }
 
-    const {
-      firstName,
-      lastName,
-      phone,
-      password,
-      classId,
-      slip,
-      role,
-      email,
-      state,
-      classType,
-    } = customerInputs;
+    const { firstName, lastName, email, password, phone } = customerInputs;
 
     session.startTransaction();
-
-    const itemIds = await Counters.find().session(session);
-
-    let class_id: string;
-
-    if (state === "nonRegistered") {
-      if (classType === "chemistry") {
-        class_id = "c" + "23_" + itemIds[0].c;
-      }
-      if (classType === "physics") {
-        class_id = "p" + "23_" + itemIds[0].p;
-      }
-      if (classType === "both") {
-        class_id = "cp" + "23_" + itemIds[0].cp;
-      }
-    } else {
-      class_id = classId;
-    }
 
     const salt = await GenerateSalt();
     const userPassword = await GeneratePassword(password, salt);
 
-    const existingUser = await User.findOne({ phone: phone }).session(session);
+    const existingUser = await User.findOne({ email: email }).session(session);
 
     if (existingUser !== null) {
       return res.status(400).json({ message: "User already exist!" });
@@ -101,79 +72,15 @@ export const UserSignUp = async (
     const user = new User({
       email: email,
       password: userPassword,
-      phone: phone,
+      role: Role.Admin,
       salt: salt,
       firstName: firstName,
       lastName: lastName,
-      classId: class_id,
-      slip: slip,
-      role: role,
-      classType: classType,
+      phone: phone,
     });
 
     const result = await user.save({ session });
 
-    // Payment
-    const d = new Date();
-
-    const paymentBody = {
-      userId: result._id,
-      classType: classType,
-      month: d.getMonth(),
-      year: d.getFullYear(),
-      slipurl: slip,
-      status: "pending",
-    };
-
-    const paymentInput = plainToClass(PaymentInputDto, paymentBody);
-    const { userId, month, year, slipurl, status } = paymentInput;
-    const payment = new Payment({
-      userId,
-      classType: classType,
-      month,
-      year,
-      slipurl,
-      status,
-    });
-    await payment.save();
-
-    if (state === "nonRegistered") {
-      if (classType === "chemistry") {
-        await Counters.findByIdAndUpdate(
-          itemIds[0]._id,
-          {
-            $inc: {
-              c: 1,
-            },
-          },
-          { new: true, session }
-        );
-      }
-
-      if (classType === "physics") {
-        await Counters.findByIdAndUpdate(
-          itemIds[0]._id,
-          {
-            $inc: {
-              p: 1,
-            },
-          },
-          { new: true, session }
-        );
-      }
-
-      if (classType === "both") {
-        await Counters.findByIdAndUpdate(
-          itemIds[0]._id,
-          {
-            $inc: {
-              cp: 1,
-            },
-          },
-          { new: true, session }
-        );
-      }
-    }
     //Generate the Signature
     const signature = await GenerateSignature({
       _id: result._id,
@@ -186,8 +93,7 @@ export const UserSignUp = async (
 
     return res.status(201).json({
       signature,
-      phone: result.phone,
-      classId: result.classId,
+
       email: result.email,
     });
   } catch (err) {
