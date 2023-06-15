@@ -6,7 +6,7 @@ import {
   EditCustomerProfileInput,
   UserLoginInput,
 } from "../dto";
-import { User, Counters } from "../models";
+import { User } from "../models";
 
 import {
   GeneratePassword,
@@ -16,11 +16,7 @@ import {
 } from "../utility";
 import { Role } from "../utility/constants";
 import { sendMail } from "../services/MailService";
-import { Video } from "../models/Video";
-import { WatchTime } from "../models/WatchTime";
-import { Payment } from "../models/Payment";
-import { PaymentInputDto } from "../dto/Payment.dto";
-import { Pdf } from "../models/Pdf";
+
 
 const mongoose = require("mongoose");
 
@@ -113,56 +109,8 @@ export const UserLogin = async (
     validationError: { target: true },
   });
 
-  if (validationError.length > 0) {
-    return res.status(400).json(validationError);
-  }
-
-  const { email, password } = customerInputs;
-
-  const student = await User.findOne({ email });
-
-  console.log(student);
-
-  if (student && student?.role === Role.Student) {
-    const validation = await ValidatePassword(
-      password,
-      student.password,
-      student.salt
-    );
-
-    if (validation) {
-      const signature = await GenerateSignature({
-        _id: student._id,
-        phone: student.phone,
-        role: student.role,
-      });
-      const userId = student._id;
-      const payment = await Payment.find({
-        userId,
-      })
-        .sort({ year: -1, month: -1 })
-        .limit(1);
-      return res.status(200).json({
-        payment,
-        signature,
-        student: {
-          role: student.role,
-          paid: student.paid,
-          classId: student.classId,
-          firstName: student.firstName,
-          lastName: student.lastName,
-          _id: student._id,
-          phone: student.phone,
-          email: student.email,
-          classType: student.classType || "none",
-        },
-      });
-    } else {
-      return res.status(401).json({ msg: "Invalid Credentials" });
-    }
-  }
-
-  return res.json({ msg: "Error With SignIn" });
+  
+  return res.json({ msg: "Message" });
 };
 
 export const GetCustomerProfile = async (
@@ -216,66 +164,6 @@ export const EditCustomerProfile = async (
   return res.status(400).json({ msg: "Error while Updating Profile" });
 };
 
-// Get  Video By LessonId
-export const GetVideosByLessonId = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const lessonId = req.params.lessonId;
-    const userId = req.params.userId;
-    let videodata: any = [];
-    if (lessonId) {
-      const videos = await Video.find({ lessonId });
-
-      if (videos.length > 0) {
-        videodata = await Promise.all(
-          videos.map(async (video: any) => {
-            const watchTime = await WatchTime.find({
-              videoId: video._id,
-              userId: userId,
-            });
-
-            if (watchTime.length > 0) {
-              return {
-                ...video._doc,
-                watchTime: watchTime[0],
-              };
-            }
-            return {
-              ...video._doc,
-              watchTime: null,
-            };
-          })
-        );
-      }
-      return res.status(200).json(videodata);
-    }
-    return res.status(400).json({ msg: "Error while Fetching Video" });
-  } catch (err) {
-    return res.status(400).json({ msg: "Error while Fetching Video" });
-  }
-};
-
-export const GetPdfsByLessonId = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const lessonId = req.params.lessonId;
-
-    if (lessonId) {
-      const pdfs = await Pdf.find({ lessonId });
-
-      return res.status(200).json(pdfs);
-    }
-    return res.status(400).json({ msg: "Error while Fetching Pdf" });
-  } catch (err) {
-    return res.status(500).json({ msg: "Error while Fetching Pdf" });
-  }
-};
 
 export const UserForgetPassword = async (
   req: Request,

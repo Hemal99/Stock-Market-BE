@@ -2,12 +2,9 @@ import express, { Request, Response, NextFunction } from "express";
 import {
   UserSignUp,
   UserLogin,
-  GetVideosByLessonId,
-  sendEmailFunc,
-  GetPdfsByLessonId,
   UserForgetPassword,
 } from "../controllers/UserController";
-import { Authenticate } from "../middleware";
+
 
 const router = express.Router();
 

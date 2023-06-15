@@ -1,5 +1,5 @@
 {
-  "name": "food_order_backend",
+  "name": "Rating-System-Backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,7 +13,7 @@
     "node": "14.15.2",
     "npm": "6.14.9"
   },
-  "author": "Jayant Gogoi",
+  "author": "Hemal Perera",
   "license": "ISC",
   "dependencies": {
     "@types/core-js": "^2.5.5",
