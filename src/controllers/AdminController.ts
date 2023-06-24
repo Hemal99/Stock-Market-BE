@@ -6,7 +6,7 @@ import { User } from "../models";
 import { Role } from "../utility/constants";
 
 import { GenerateSignature, ValidatePassword } from "../utility";
-
+import { Stock } from "../models/Stock";
 
 export const AdminLogin = async (
   req: Request,
@@ -66,6 +66,117 @@ export const GetStudentProfiles = async (
       }
     }
     return res.status(400).json({ msg: "Error while Fetching Profiles" });
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+};
+
+// Add Stock
+
+export const AddStock = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+
+    if (user && user.role === Role.Admin) {
+      const stock = await Stock.create(req.body);
+
+      if (stock) {
+        return res.status(200).json(stock);
+      }
+    }
+    return res.status(400).json({ msg: "Error while Adding Stock" });
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+};
+
+// Get Stocks
+export const GetStock = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+
+    if (user && user.role === Role.Admin) {
+      const stock = await Stock.find();
+
+      if (stock) {
+        return res.status(200).json(stock);
+      }
+    }
+    return res.status(400).json({ msg: "Error while Fetching Stock" });
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+};
+
+// Change the price of a stock
+export const ChangeStockPrice = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+    if (user && user.role === Role.Admin) {
+      const stock = await Stock.findById(req.params.id);
+      if (stock) {
+        stock.value = req.body.value;
+        await stock.save();
+        return res.status(200).json(stock);
+      }
+    }
+    return res.status(400).json({ msg: "Error while Updating Stock" });
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+};
+
+// update a stock
+export const UpdateStock = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+    if (user && user.role === Role.Admin) {
+      const stock = await Stock.findById(req.params.id);
+      if (stock) {
+        stock.value = req.body.value;
+        stock.name = req.body.name;
+        stock.type = req.body.type;
+        await stock.save();
+        return res.status(200).json(stock);
+      }
+    }
+    return res.status(400).json({ msg: "Error while Updating Stock" });
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+};
+
+// Delete a stock
+export const DeleteStock = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+    if (user && user.role === Role.Admin) {
+      const stock = await Stock.findByIdAndDelete(req.params.id);
+      if (stock) {
+        return res.status(200).json(stock);
+      }
+    }
+    return res.status(400).json({ msg: "Error while Deleting Stock" });
   } catch (error) {
     return res.sendStatus(500);
   }
