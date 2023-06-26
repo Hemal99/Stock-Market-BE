@@ -1,9 +1,10 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 interface StockDoc extends Document {
- name:String;
- value:String;
- type:String;
+  name: String;
+  value: String;
+  type: String;
+  companyId: String;
 }
 
 const StockSchema = new Schema(
@@ -11,6 +12,10 @@ const StockSchema = new Schema(
     name: { type: String },
     value: { type: Number },
     type: { type: String },
+    companyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "company",
+    },
   },
   {
     toJSON: {
