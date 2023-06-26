@@ -1,7 +1,7 @@
 import express, { Application } from "express";
 import path from "path";
 const cors = require("cors");
-import { UserRoute, AdminRoute } from "../routes";
+import { UserRoute, AdminRoute, ClientRoute } from "../routes";
 
 
 var xhub = require("express-x-hub");
@@ -19,6 +19,7 @@ async function App(app: Application) {
   app.use("/images", express.static(imagePath));
   app.use("/admin", AdminRoute);
   app.use("/user", UserRoute);
+  app.use("/client", ClientRoute);
 
   return app;
 }
