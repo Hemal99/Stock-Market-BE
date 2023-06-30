@@ -3,6 +3,7 @@ import {
   UserSignUp,
   UserLogin,
   UserForgetPassword,
+  GetCompaniesForUser,
 } from "../controllers/UserController";
 
 
@@ -16,5 +17,8 @@ router.post("/login", UserLogin);
 
 /* ------------------- Forget Password --------------------- */
 router.post("/forget-password", UserForgetPassword);
+
+/*------------------- Get Company ---------------------*/
+router.get("/get-companies", GetCompaniesForUser)
 
 export { router as UserRoute };

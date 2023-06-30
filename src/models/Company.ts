@@ -5,6 +5,10 @@ interface CompanyDoc extends Document {
   description: String;
   exchangeShortName: String;
   image: String;
+  stocks :[Number],
+  firstQuarter: Number,
+  secondQuarter: Number,
+  thirdQuarter: Number,
 }
 
 const CompanySchema = new Schema(
@@ -13,6 +17,11 @@ const CompanySchema = new Schema(
     description: { type: String },
     exchangeShortName: { type: String },
     image: { type: String },
+    stocks: [Number],
+    firstQuarter: { type: Number },
+    secondQuarter: { type: Number },
+    thirdQuarter: { type: Number },
+    stockCount: { type: Number },
   },
   {
     toJSON: {

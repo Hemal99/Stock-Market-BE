@@ -6,7 +6,7 @@ import {
   EditCustomerProfileInput,
   UserLoginInput,
 } from "../dto";
-import { User } from "../models";
+import { Company, User } from "../models";
 
 import {
   GeneratePassword,
@@ -16,7 +16,6 @@ import {
 } from "../utility";
 import { Role } from "../utility/constants";
 import { sendMail } from "../services/MailService";
-
 
 const mongoose = require("mongoose");
 
@@ -109,7 +108,6 @@ export const UserLogin = async (
     validationError: { target: true },
   });
 
-  
   return res.json({ msg: "Message" });
 };
 
@@ -164,7 +162,6 @@ export const EditCustomerProfile = async (
   return res.status(400).json({ msg: "Error while Updating Profile" });
 };
 
-
 export const UserForgetPassword = async (
   req: Request,
   res: Response,
@@ -190,5 +187,23 @@ export const UserForgetPassword = async (
     return res.status(400).json({ msg: "Error while Changing Password" });
   } catch (err) {
     return res.status(500).json({ msg: "Error while Fetching Pdf" });
+  }
+};
+
+// Get Companies
+export const GetCompaniesForUser= async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const company = await Company.find();
+
+    if (company) {
+      return res.status(200).json(company);
+    }
+    return res.status(400).json({ msg: "Error while Fetching Company" });
+  } catch (error) {
+    return res.sendStatus(500);
   }
 };
