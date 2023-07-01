@@ -275,6 +275,8 @@ export const UpdateCompany = async (
     const user = req.user;
     if (user && user.role === Role.Admin) {
       const company = await Company.findById(req.params.id);
+
+   
       if (company) {
         company.companyName = req.body.companyName;
         company.description = req.body.description;
@@ -283,6 +285,8 @@ export const UpdateCompany = async (
         company.firstQuarter = req.body.firstQuarter;
         company.secondQuarter = req.body.secondQuarter;
         company.thirdQuarter = req.body.thirdQuarter;
+        company.stocks = req.body.stocks;
+
         await company.save();
         return res.status(200).json(company);
       }

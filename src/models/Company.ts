@@ -9,6 +9,7 @@ interface CompanyDoc extends Document {
   firstQuarter: Number,
   secondQuarter: Number,
   thirdQuarter: Number,
+  totalStocks: Number,
 }
 
 const CompanySchema = new Schema(
@@ -22,6 +23,7 @@ const CompanySchema = new Schema(
     secondQuarter: { type: Number },
     thirdQuarter: { type: Number },
     stockCount: { type: Number },
+    totalStocks: { type: Number },
   },
   {
     toJSON: {
