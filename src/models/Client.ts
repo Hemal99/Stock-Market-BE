@@ -13,7 +13,7 @@ interface ClientDoc extends Document {
 const ClientSchema = new Schema(
   {
     email: { type: String, unique: true },
-    fullName: { type: String },
+    username: { type: String },
     depositAmount: { type: Number },
     password: { type: String },
     salt: { type: String },

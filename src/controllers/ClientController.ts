@@ -29,7 +29,7 @@ export const ClientSignUp = async (
   const session = await mongoose.startSession();
 
   try {
-    const { fullName, email, password, depositAmount } = req.body;
+    const { username, email, password, depositAmount } = req.body;
 
     session.startTransaction();
 
@@ -43,7 +43,7 @@ export const ClientSignUp = async (
     }
 
     const user = new Client({
-      fullName,
+      username,
       email,
       password: userPassword,
       salt,
