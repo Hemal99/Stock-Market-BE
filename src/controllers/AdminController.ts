@@ -280,6 +280,9 @@ export const UpdateCompany = async (
         company.description = req.body.description;
         company.exchangeShortName = req.body.exchangeShortName;
         company.image = req.body.image;
+        company.firstQuarter = req.body.firstQuarter;
+        company.secondQuarter = req.body.secondQuarter;
+        company.thirdQuarter = req.body.thirdQuarter;
         await company.save();
         return res.status(200).json(company);
       }
