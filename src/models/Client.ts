@@ -8,6 +8,7 @@ interface ClientDoc extends Document {
   fullName: String;
   depositAmount: Number;
   ledgerId: [String];
+  username: String;
 }
 
 const ClientSchema = new Schema(

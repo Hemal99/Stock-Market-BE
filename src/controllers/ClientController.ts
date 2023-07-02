@@ -6,7 +6,7 @@ import {
   EditCustomerProfileInput,
   UserLoginInput,
 } from "../dto";
-import { User } from "../models";
+import { LeaderBoard, User } from "../models";
 
 import {
   GeneratePassword,
@@ -36,7 +36,7 @@ export const ClientSignUp = async (
     const salt = await GenerateSalt();
     const userPassword = await GeneratePassword(password, salt);
 
-    const existingUser = await User.findOne({ email: email }).session(session);
+    const existingUser = await User.findOne({ email: email,username }).session(session);
 
     if (existingUser !== null) {
       return res.status(400).json({ message: "User already exist!" });
@@ -103,9 +103,12 @@ export const ClientLogin = async (
           email: user.email,
         });
 
+        console.log("user", user);
+
         return res.status(200).json({
           signature,
           id: user._id,
+          username: user?.username || user?.fullName,
         });
       }
     }
@@ -192,6 +195,66 @@ export const AddLedger = async (
       await client.save();
       return res.status(201).json(client);
     }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// Add to LeaderBoard
+
+export const AddToLeaderBoard = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id, username, networth } = req.body;
+
+    //  console.log("id", req.body);
+
+    if(!networth) return res.status(400).json({msg: "Networth is required"})
+
+    const client = await Client.findById(id);
+
+    console.log("client", client);
+
+    if (client) {
+      const leaderboard = {
+        userId: client?._id,
+        username,
+        networth,
+      };
+
+      const isClientExist = await LeaderBoard.findOne({ userId: client?._id });
+
+      if (isClientExist) {
+        await LeaderBoard.findOneAndUpdate(
+          { userId: client?._id },
+          { networth: networth }
+        );
+        return res.status(201).json(isClientExist);
+      }
+
+      const learderBoard = await LeaderBoard.create(leaderboard);
+
+      return res.status(201).json(learderBoard);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// get LeaderBoard
+
+export const GetLeaderBoard = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const leaderboard = await LeaderBoard.find().sort({ networth: -1 });
+
+    return res.status(201).json(leaderboard);
   } catch (err) {
     console.log(err);
   }

@@ -1,6 +1,6 @@
 import express from "express";
 
-import { AddLedger, ClientLogin, ClientSignUp } from "../controllers";
+import { AddLedger, AddToLeaderBoard, ClientLogin, ClientSignUp, GetLeaderBoard } from "../controllers";
 
 import { Authenticate } from "../middleware";
 
@@ -11,6 +11,10 @@ router.post("/signup", ClientSignUp);
 
 /* ------------------- Login --------------------- */
 router.post("/login", ClientLogin);
+
+router.post("/add-to-leaderBoard", AddToLeaderBoard);
+
+router.get("/leader-board", GetLeaderBoard);
 
 
 /* ------------------- Authentication --------------------- */
