@@ -6,7 +6,7 @@ import {
   EditCustomerProfileInput,
   UserLoginInput,
 } from "../dto";
-import { LeaderBoard, User } from "../models";
+import { LeaderBoard, PlayCount, User } from "../models";
 
 import {
   GeneratePassword,
@@ -89,6 +89,11 @@ export const ClientLogin = async (
 
     const { email, password } = customerInputs;
     const user = await Client.findOne({ email });
+
+    const playCount = await PlayCount.findOne();
+
+    console.log("playCount", playCount);
+
     if (user) {
       const validation = await ValidatePassword(
         password,
@@ -109,6 +114,7 @@ export const ClientLogin = async (
           signature,
           id: user._id,
           username: user?.username || user?.fullName,
+          playCount: playCount?.playCount,
         });
       }
     }

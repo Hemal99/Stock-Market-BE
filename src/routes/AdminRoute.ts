@@ -1,6 +1,7 @@
 import express from "express";
 import {
   AddCompany,
+  AddPlayCount,
   AddStock,
   AdminLogin,
   ChangeStockPrice,
@@ -8,6 +9,7 @@ import {
   DeleteStock,
   GetCompanies,
   GetCompanyById,
+  GetPlayCount,
   GetStock,
   GetStockForUser,
   GetStudentProfiles,
@@ -56,6 +58,12 @@ router.put("/update-company/:id", UpdateCompany);
 
 /* ------------------- Delete Company --------------------- */
 router.delete("/delete-company/:id", DeleteCompany);
+
+/*--------------------- Add PlayCount ---------------------*/
+router.post("/add-playCount", AddPlayCount);
+
+/*--------------------- Get PlayCount ---------------------*/
+router.get("/get-playCount", GetPlayCount);
 
 
 export { router as AdminRoute };

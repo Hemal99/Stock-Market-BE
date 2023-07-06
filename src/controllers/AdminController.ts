@@ -2,7 +2,7 @@ import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { Request, Response, NextFunction } from "express";
 import { UserLoginInput } from "../dto";
-import { Company, User } from "../models";
+import { Company, PlayCount, User } from "../models";
 import { Role } from "../utility/constants";
 
 import { GenerateSignature, ValidatePassword } from "../utility";
@@ -276,7 +276,6 @@ export const UpdateCompany = async (
     if (user && user.role === Role.Admin) {
       const company = await Company.findById(req.params.id);
 
-   
       if (company) {
         company.companyName = req.body.companyName;
         company.description = req.body.description;
@@ -312,6 +311,63 @@ export const DeleteCompany = async (
       }
     }
     return res.status(400).json({ msg: "Error while Deleting Company" });
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+};
+
+// Add Play Count
+
+export const AddPlayCount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+
+    if (user && user.role === Role.Admin) {
+      const playCountExists = await PlayCount.find();
+
+      if (playCountExists.length > 0) {
+        playCountExists[0].playCount = req.body.playCount;
+
+        await playCountExists[0].save();
+
+        return res.status(200).json(playCountExists[0]);
+      }
+
+      const playCount = await PlayCount.create(req.body);
+
+      if (playCount) {
+        return res.status(200).json(playCount);
+      }
+    }
+    return res.status(400).json({ msg: "Error while Adding PlayCount" });
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+};
+
+// get Play Count
+
+export const GetPlayCount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+
+    if (user && user.role === Role.Admin) {
+      const playCount = await PlayCount.find();
+
+      if (playCount.length > 0) {
+        return res.status(200).json(playCount[0]);
+      }
+    }
+    return res.status(400).json({ msg: "Error while Fetching PlayCount" });
   } catch (error) {
     return res.sendStatus(500);
   }
