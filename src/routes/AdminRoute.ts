@@ -6,6 +6,7 @@ import {
   AdminLogin,
   ChangeStockPrice,
   DeleteCompany,
+  DeleteLeaderBoard,
   DeleteStock,
   GetCompanies,
   GetCompanyById,
@@ -64,6 +65,9 @@ router.post("/add-playCount", AddPlayCount);
 
 /*--------------------- Get PlayCount ---------------------*/
 router.get("/get-playCount", GetPlayCount);
+
+/*--------------------- Delete Players in LeaderBoard ---------------------*/
+router.delete("/delete-players/:id", DeleteLeaderBoard);
 
 
 export { router as AdminRoute };

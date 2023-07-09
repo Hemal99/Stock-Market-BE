@@ -2,7 +2,7 @@ import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { Request, Response, NextFunction } from "express";
 import { UserLoginInput } from "../dto";
-import { Company, PlayCount, User } from "../models";
+import { Company, LeaderBoard, PlayCount, User } from "../models";
 import { Role } from "../utility/constants";
 
 import { GenerateSignature, ValidatePassword } from "../utility";
@@ -372,3 +372,25 @@ export const GetPlayCount = async (
     return res.sendStatus(500);
   }
 };
+
+
+// Delete LeaderBoard
+
+export const DeleteLeaderBoard = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user;
+    if (user && user.role === Role.Admin) {
+      const leaderBoard = await LeaderBoard.findByIdAndDelete(req.params.id);
+      if (leaderBoard) {
+        return res.status(200).json(leaderBoard);
+      }
+    }
+    return res.status(400).json({ msg: "Error while Deleting LeaderBoard" });
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+}
